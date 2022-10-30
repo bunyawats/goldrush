@@ -1,9 +1,9 @@
 
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/flame.dart';
-import 'package:goldrush/components/player.dart';
+
+import 'components/george.dart';
 
 void main() async {
   final goldRush = GoldRush();
@@ -17,10 +17,10 @@ void main() async {
 }
 
 class GoldRush extends FlameGame with HasCollidables {
+
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    add(Player());
-    add(ScreenCollidable());
+    add(George());
   }
 }
