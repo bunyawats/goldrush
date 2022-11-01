@@ -7,6 +7,7 @@ import 'components/background.dart';
 import 'components/george.dart';
 import 'components/skeleton.dart';
 import 'components/zombie.dart';
+import 'components/hud/hud.dart';
 
 void main() async {
   final goldRush = GoldRush();
@@ -19,10 +20,13 @@ void main() async {
   );
 }
 
-class GoldRush extends FlameGame with HasCollidables {
+class GoldRush extends FlameGame
+    with HasCollidables, HasDraggables, HasTappables {
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
+    add(HudComponent());
     add(Backgroud());
 
     add(George(
