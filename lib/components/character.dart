@@ -20,6 +20,11 @@ class Character extends SpriteAnimationComponent with HasHitboxes, Collidable {
     this.position = position;
     this.size = size;
   }
+
+
+  void onPaused(){}
+
+  void onResumed(){}
 }
 
 extension CreateAnimationByColumn on SpriteSheet {

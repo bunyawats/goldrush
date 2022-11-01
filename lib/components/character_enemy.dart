@@ -14,7 +14,6 @@ class EnemyCharacter extends Character {
           speed: speed,
         );
 
-  @override
   void changeDirection() {
     Random random = Random();
     int newDirection = random.nextInt(4);

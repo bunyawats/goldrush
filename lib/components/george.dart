@@ -2,20 +2,22 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
-import 'package:flame/input.dart';
-import 'character.dart';
-import '/utils/math_utils.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 
+import '/utils/math_utils.dart';
+import 'character.dart';
 import 'hud/hud.dart';
 import 'skeleton.dart';
 import 'zombie.dart';
 
 class George extends Character {
+  final HudComponent hud;
   late final double walkingSpeed, runnungSpeed;
   late Vector2 targetLocation;
   bool movingToTouchLacation = false;
-
-  final HudComponent hud;
+  bool isMoving = false;
+  late AudioPlayer audioPlayerRunning;
 
   George({
     required this.hud,
@@ -55,11 +57,18 @@ class George extends Character {
       stepTime: 0.2,
     );
 
-    anchor = Anchor.center;
-    addHitbox(HitboxRectangle());
-
     animation = downAnimation;
     playing = false;
+    anchor = Anchor.center;
+
+    addHitbox(HitboxRectangle());
+
+    await FlameAudio.audioCache.loadAll(
+      [
+        'sounds/enemy_dies.wav',
+        'sounds/running.wav',
+      ],
+    );
   }
 
   @override
@@ -68,11 +77,13 @@ class George extends Character {
     if (other is Zombie || other is Skeleton) {
       other.removeFromParent();
       hud.scoreText.setScore(10);
+
+      FlameAudio.play('sounds/enemy_dies.wav', volume: 1.0);
     }
   }
 
   @override
-  void update(double dt) {
+  void update(double dt) async {
     super.update(dt);
     speed = hud.runButton.buttonPressed ? runnungSpeed : walkingSpeed;
 
@@ -80,6 +91,14 @@ class George extends Character {
       position.add(hud.joystick.relativeDelta * speed * dt);
       playing = true;
       movingToTouchLacation = false;
+
+      if (!isMoving) {
+        isMoving = true;
+        audioPlayerRunning = await FlameAudio.loopLongAudio(
+          'sounds/running.wav',
+          volume: 1.0,
+        );
+      }
 
       switch (hud.joystick.direction) {
         case JoystickDirection.up:
@@ -108,12 +127,24 @@ class George extends Character {
       }
     } else {
       if (movingToTouchLacation) {
+        if (!isMoving) {
+          isMoving = true;
+          audioPlayerRunning = await FlameAudio.loopLongAudio(
+            'sounds/running.wav',
+            volume: 1.0,
+          );
+        }
+
         position += (targetLocation - position).normalized() * (speed * dt);
 
         const threshold = 1.0;
         var difference = targetLocation - position;
         if (difference.x.abs() < threshold && difference.y.abs() < threshold) {
           stopAnimation();
+
+          audioPlayerRunning.stop();
+          isMoving = false;
+
           movingToTouchLacation = false;
           return;
         }
@@ -137,6 +168,10 @@ class George extends Character {
         if (playing) {
           stopAnimation();
         }
+        if (isMoving) {
+          isMoving = false;
+          audioPlayerRunning.stop();
+        }
       }
     }
   }
@@ -149,5 +184,24 @@ class George extends Character {
   void moveToLocation(Vector2 targetLocation) {
     this.targetLocation = targetLocation;
     movingToTouchLacation = true;
+  }
+
+  void stopAnimations() {
+    animation?.currentIndex = 0;
+    playing = false;
+  }
+
+  @override
+  void onPaused() {
+    if (isMoving) {
+      audioPlayerRunning.pause();
+    }
+  }
+
+  @override
+  void onResumed() async {
+    if (isMoving) {
+      audioPlayerRunning.resume();
+    }
   }
 }

@@ -2,8 +2,10 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/flame.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 import 'components/background.dart';
+import 'components/character.dart';
 import 'components/george.dart';
 import 'components/skeleton.dart';
 import 'components/zombie.dart';
@@ -25,6 +27,13 @@ class GoldRush extends FlameGame
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
+    FlameAudio.bgm.initialize();
+    await FlameAudio.bgm.load('music/music.mp3');
+    await FlameAudio.bgm.play(
+      'music/music.mp3',
+      volume: 0.1,
+    );
 
     var hud = HudComponent();
     var george = George(
@@ -58,5 +67,36 @@ class GoldRush extends FlameGame
     ));
     add(ScreenCollidable());
     add(hud);
+  }
+
+  @override
+  void onRemove() {
+    FlameAudio.bgm.stop();
+    FlameAudio.bgm.clearAll();
+
+    super.onRemove();
+  }
+
+  @override
+  void lifecycleStateChange(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        for (var component in children) {
+          if (component is Character) {
+            component.onPaused();
+          }
+        }
+        break;
+      case AppLifecycleState.resumed:
+        for (var component in children) {
+          if (component is Character) {
+            component.onResumed();
+          }
+        }
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 }
