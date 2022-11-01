@@ -2,7 +2,9 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
-import 'package:goldrush/components/character.dart';
+import 'package:flame/input.dart';
+import 'character.dart';
+import '/utils/math_utils.dart';
 
 import 'hud/hud.dart';
 import 'skeleton.dart';
@@ -10,6 +12,8 @@ import 'zombie.dart';
 
 class George extends Character {
   late final double walkingSpeed, runnungSpeed;
+  late Vector2 targetLocation;
+  bool movingToTouchLacation = false;
 
   final HudComponent hud;
 
@@ -50,6 +54,8 @@ class George extends Character {
       column: 3,
       stepTime: 0.2,
     );
+
+    anchor = Anchor.center;
     addHitbox(HitboxRectangle());
 
     animation = downAnimation;
@@ -73,6 +79,7 @@ class George extends Character {
     if (!hud.joystick.delta.isZero()) {
       position.add(hud.joystick.relativeDelta * speed * dt);
       playing = true;
+      movingToTouchLacation = false;
 
       switch (hud.joystick.direction) {
         case JoystickDirection.up:
@@ -99,8 +106,37 @@ class George extends Character {
           animation = null;
           break;
       }
-      if (playing) {
-        stopAnimation();
+    } else {
+      if (movingToTouchLacation) {
+        position += (targetLocation - position).normalized() * (speed * dt);
+
+        const threshold = 1.0;
+        var difference = targetLocation - position;
+        if (difference.x.abs() < threshold && difference.y.abs() < threshold) {
+          stopAnimation();
+          movingToTouchLacation = false;
+          return;
+        }
+
+        playing = true;
+        var angle = getAngle(position, targetLocation);
+        if ((angle > 315 && angle < 360) || (angle > 0 && angle < 45)) {
+          animation = rightAnimation;
+          currentDirection = Character.right;
+        } else if (angle > 45 && angle < 135) {
+          animation = upAnimation;
+          currentDirection = Character.down;
+        } else if (angle > 135 && angle < 225) {
+          animation = leftAnimation;
+          currentDirection = Character.left;
+        } else if (angle > 225 && angle < 315) {
+          animation = downAnimation;
+          currentDirection = Character.up;
+        }
+      } else {
+        if (playing) {
+          stopAnimation();
+        }
       }
     }
   }
@@ -108,5 +144,10 @@ class George extends Character {
   void stopAnimation() {
     animation?.currentIndex = 0;
     playing = false;
+  }
+
+  void moveToLocation(Vector2 targetLocation) {
+    this.targetLocation = targetLocation;
+    movingToTouchLacation = true;
   }
 }

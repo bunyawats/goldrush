@@ -1,11 +1,17 @@
 import 'package:flame/components.dart';
+import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
-class Backgroud extends PositionComponent {
+import 'george.dart';
+
+class Backgroud extends PositionComponent with Tappable {
   static final backgroudPaint = BasicPalette.white.paint();
   late double screenWidth, screenHeight;
+  final George george;
+
+  Backgroud(this.george);
 
   @override
   Future<void> onLoad() async {
@@ -27,5 +33,11 @@ class Backgroud extends PositionComponent {
       ),
       backgroudPaint,
     );
+  }
+
+  @override
+  bool onTapUp(TapUpInfo info) {
+    george.moveToLocation(info.eventPosition.game);
+    return true;
   }
 }
