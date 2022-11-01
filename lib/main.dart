@@ -26,10 +26,11 @@ class GoldRush extends FlameGame
   Future<void> onLoad() async {
     super.onLoad();
 
-    add(HudComponent());
-    add(Backgroud());
+    var hud = HudComponent();
 
+    add(Backgroud());
     add(George(
+      hud: hud,
       position: Vector2(200, 400),
       size: Vector2(48.0, 48.0),
       speed: 40.0,
@@ -54,7 +55,7 @@ class GoldRush extends FlameGame
       size: Vector2(32.0, 64.0),
       speed: 60.0,
     ));
-
     add(ScreenCollidable());
+    add(hud);
   }
 }

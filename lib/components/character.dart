@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 
@@ -20,75 +19,6 @@ class Character extends SpriteAnimationComponent with HasHitboxes, Collidable {
   }) {
     this.position = position;
     this.size = size;
-  }
-
-  void changeDirection() {
-    Random random = Random();
-    int newDirection = random.nextInt(4);
-    switch (newDirection) {
-      case down:
-        animation = downAnimation;
-        break;
-      case left:
-        animation = leftAnimation;
-        break;
-      case up:
-        animation = upAnimation;
-        break;
-      case right:
-        animation = rightAnimation;
-        break;
-    }
-    currentDirection = newDirection;
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-    elapsedTime += dt;
-    if (elapsedTime > 3.0) {
-      changeDirection();
-      elapsedTime = 0.0;
-    }
-    switch (currentDirection) {
-      case down:
-        position.y += speed * dt;
-        break;
-      case left:
-        position.x -= speed * dt;
-        break;
-      case up:
-        position.y -= speed * dt;
-        break;
-      case right:
-        position.x += speed * dt;
-        break;
-    }
-  }
-
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (other is ScreenCollidable) {
-      switch (currentDirection) {
-        case down:
-          currentDirection = up;
-          animation = upAnimation;
-          break;
-        case left:
-          currentDirection = right;
-          animation = rightAnimation;
-          break;
-        case up:
-          currentDirection = down;
-          animation = downAnimation;
-          break;
-        case right:
-          currentDirection = left;
-          animation = leftAnimation;
-          break;
-      }
-      elapsedTime = 0.0;
-    }
   }
 }
 

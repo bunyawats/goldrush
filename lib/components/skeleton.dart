@@ -2,9 +2,10 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
-import 'package:goldrush/components/character.dart';
 
-class Skeleton extends Character {
+import 'character_enemy.dart';
+
+class Skeleton extends EnemyCharacter {
   Skeleton({
     required Vector2 position,
     required Vector2 size,
