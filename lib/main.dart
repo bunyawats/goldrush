@@ -52,26 +52,30 @@ class GoldRush extends FlameGame
     add(tiledMap);
 
     add(george);
-    add(Zombie(
-      position: Vector2(100, 200),
-      size: Vector2(32.0, 64.0),
-      speed: 20.0,
-    ));
-    add(Zombie(
-      position: Vector2(300, 200),
-      size: Vector2(32.0, 64.0),
-      speed: 20.0,
-    ));
-    add(Skeleton(
-      position: Vector2(100, 300),
-      size: Vector2(32.0, 64.0),
-      speed: 60.0,
-    ));
-    add(Skeleton(
-      position: Vector2(300, 300),
-      size: Vector2(32.0, 64.0),
-      speed: 60.0,
-    ));
+
+    final enemies = tiledMap.tileMap.getObjectGroupFromLayer('Enemies');
+    enemies.objects.asMap().forEach(
+      (index, position) {
+        if (index % 2 == 0) {
+          add(
+            Skeleton(
+              position: Vector2(position.x, position.y),
+              size: Vector2(32.0, 64.0),
+              speed: 60.0,
+            ),
+          );
+        } else {
+          add(
+            Zombie(
+              position: Vector2(position.x, position.y),
+              size: Vector2(32.0, 64.0),
+              speed: 20.0,
+            ),
+          );
+        }
+      },
+    );
+
     add(ScreenCollidable());
     add(hud);
   }
