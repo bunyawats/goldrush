@@ -10,7 +10,6 @@ import 'character.dart';
 import 'hud/hud.dart';
 import 'skeleton.dart';
 import 'zombie.dart';
-import 'coin.dart';
 
 class George extends Character {
   final HudComponent hud;
