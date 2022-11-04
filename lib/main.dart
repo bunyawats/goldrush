@@ -92,7 +92,7 @@ class GoldRush extends FlameGame
       ));
     }
 
-    add(ScreenCollidable());
+    // add(ScreenCollidable());
     add(hud);
 
     camera.speed = 1;
