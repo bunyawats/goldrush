@@ -10,6 +10,7 @@ import 'character.dart';
 import 'hud/hud.dart';
 import 'skeleton.dart';
 import 'zombie.dart';
+import 'coin.dart';
 
 class George extends Character {
   final HudComponent hud;
@@ -67,6 +68,7 @@ class George extends Character {
       [
         'sounds/enemy_dies.wav',
         'sounds/running.wav',
+        'sounds/coin.wav',
       ],
     );
   }
@@ -76,9 +78,9 @@ class George extends Character {
     super.onCollision(intersectionPoints, other);
     if (other is Zombie || other is Skeleton) {
       other.removeFromParent();
-      hud.scoreText.setScore(10);
+      hud.scoreText.setScore(20);
 
-      FlameAudio.play('sounds/enemy_dies.wav', volume: 1.0);
+      FlameAudio.play('sounds/coin.wav', volume: 1.0);
     }
   }
 
