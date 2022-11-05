@@ -1,8 +1,9 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_audio/flame_audio.dart';
+// ignore: depend_on_referenced_packages
 import 'package:audioplayers/audioplayers.dart';
 
 import '/utils/math_utils.dart';
@@ -61,7 +62,7 @@ class George extends Character {
     playing = false;
     anchor = Anchor.center;
 
-    addHitbox(HitboxRectangle());
+    add(RectangleHitbox());
 
     await FlameAudio.audioCache.loadAll(
       [
@@ -73,7 +74,7 @@ class George extends Character {
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     if (other is Zombie || other is Skeleton) {
       other.removeFromParent();

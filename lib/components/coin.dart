@@ -1,9 +1,9 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
 
-class Coin extends SpriteAnimationComponent with HasHitboxes, Collidable {
+class Coin extends SpriteAnimationComponent with GestureHitboxes {
   Coin({
     required Vector2 position,
     required Vector2 size,
@@ -25,6 +25,6 @@ class Coin extends SpriteAnimationComponent with HasHitboxes, Collidable {
       to: 7,
     );
 
-    addHitbox(HitboxRectangle());
+    add(RectangleHitbox()..collisionType = CollisionType.passive);
   }
 }

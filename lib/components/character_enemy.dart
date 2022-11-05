@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:goldrush/components/character.dart';
+import 'character.dart';
+import 'water.dart';
 
 class EnemyCharacter extends Character {
   EnemyCharacter({
@@ -59,8 +60,11 @@ class EnemyCharacter extends Character {
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (other is ScreenCollidable) {
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+
+    if (other is Water) {
       switch (currentDirection) {
         case Character.down:
           currentDirection = Character.up;

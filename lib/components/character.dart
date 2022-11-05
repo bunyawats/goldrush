@@ -1,7 +1,9 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 
-class Character extends SpriteAnimationComponent with HasHitboxes, Collidable {
+class Character extends SpriteAnimationComponent
+    with GestureHitboxes, CollisionCallbacks {
   static const int down = 0, left = 1, up = 2, right = 3;
 
   late SpriteAnimation downAnimation,
@@ -21,10 +23,9 @@ class Character extends SpriteAnimationComponent with HasHitboxes, Collidable {
     this.size = size;
   }
 
+  void onPaused() {}
 
-  void onPaused(){}
-
-  void onResumed(){}
+  void onResumed() {}
 }
 
 extension CreateAnimationByColumn on SpriteSheet {

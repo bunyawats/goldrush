@@ -1,10 +1,11 @@
 import 'dart:ui';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/geometry.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/palette.dart';
 
-class Player extends PositionComponent with HasHitboxes, Collidable {
+class Player extends PositionComponent
+    with GestureHitboxes, CollisionCallbacks {
   static const int squareSpeed = 250;
   static final squarePaint = BasicPalette.green.paint();
   static const squareWidth = 100.0, squareHeight = 100.0;
@@ -28,12 +29,13 @@ class Player extends PositionComponent with HasHitboxes, Collidable {
     position = Vector2(centerX, centerY);
     size = Vector2(squareWidth, squareHeight);
 
-    addHitbox(HitboxRectangle());
+    add(RectangleHitbox());
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (other is ScreenCollidable) {
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    if (other is ScreenHitbox) {
       if (squareDirection == 1) {
         squareDirection = -1;
       } else {
@@ -46,11 +48,5 @@ class Player extends PositionComponent with HasHitboxes, Collidable {
   void update(double dt) {
     super.update(dt);
     position.x += squareSpeed * squareDirection * dt;
-  }
-
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-    renderHitboxes(canvas, paint: squarePaint);
   }
 }

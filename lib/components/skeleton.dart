@@ -1,6 +1,6 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
 
 import 'character_enemy.dart';
@@ -50,6 +50,6 @@ class Skeleton extends EnemyCharacter {
     );
     changeDirection();
 
-    addHitbox(HitboxRectangle());
+    add(RectangleHitbox());
   }
 }

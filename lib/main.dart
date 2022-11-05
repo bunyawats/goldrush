@@ -1,16 +1,18 @@
 import 'dart:math';
 
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
+// ignore: depend_on_referenced_packages
+import 'package:tiled/tiled.dart';
 
 import 'components/background.dart';
 import 'components/character.dart';
 import 'components/george.dart';
 import 'components/skeleton.dart';
+import 'components/water.dart';
 import 'components/zombie.dart';
 import 'components/hud/hud.dart';
 import 'components/coin.dart';
@@ -27,13 +29,14 @@ void main() async {
 }
 
 class GoldRush extends FlameGame
-    with HasCollidables, HasDraggables, HasTappables {
+    with HasDraggables, HasTappables, HasCollisionDetection {
   @override
   Future<void> onLoad() async {
     super.onLoad();
 
+    debugMode = true;
+
     FlameAudio.bgm.initialize();
-    await FlameAudio.bgm.load('music/music.mp3');
     await FlameAudio.bgm.play(
       'music/music.mp3',
       volume: 0.1,
@@ -56,28 +59,28 @@ class GoldRush extends FlameGame
 
     add(george);
 
-    final enemies = tiledMap.tileMap.getObjectGroupFromLayer('Enemies');
-    enemies.objects.asMap().forEach(
-      (index, position) {
-        if (index % 2 == 0) {
-          add(
-            Skeleton(
-              position: Vector2(position.x, position.y),
-              size: Vector2(32.0, 64.0),
-              speed: 60.0,
-            ),
-          );
-        } else {
-          add(
-            Zombie(
-              position: Vector2(position.x, position.y),
-              size: Vector2(32.0, 64.0),
-              speed: 20.0,
-            ),
-          );
-        }
-      },
-    );
+    final enemies = tiledMap.tileMap.getLayer<ObjectGroup>('Enemies');
+
+    for (int index = 0; index < enemies!.objects.length; index++) {
+      TiledObject tiled = enemies.objects[index];
+      if (index % 2 == 0) {
+        add(
+          Skeleton(
+            position: Vector2(tiled.x, tiled.y),
+            size: Vector2(32.0, 64.0),
+            speed: 60.0,
+          ),
+        );
+      } else {
+        add(
+          Zombie(
+            position: Vector2(tiled.x, tiled.y),
+            size: Vector2(32.0, 64.0),
+            speed: 20.0,
+          ),
+        );
+      }
+    }
 
     Random random = Random(DateTime.now().millisecondsSinceEpoch);
     for (int i = 0; i < 50; i++) {
@@ -92,7 +95,17 @@ class GoldRush extends FlameGame
       ));
     }
 
-    // add(ScreenCollidable());
+    final water = tiledMap.tileMap.getLayer<ObjectGroup>('Water');
+    for (final tiled in water!.objects) {
+      add(
+        Water(
+          position: Vector2(tiled.x, tiled.y),
+          size: Vector2(tiled.width, tiled.height),
+          id: tiled.id,
+        ),
+      );
+    }
+
     add(hud);
 
     camera.speed = 1;
@@ -110,7 +123,7 @@ class GoldRush extends FlameGame
   @override
   void onRemove() {
     FlameAudio.bgm.stop();
-    FlameAudio.bgm.clearAll();
+    FlameAudio.bgm.dispose();
 
     super.onRemove();
   }

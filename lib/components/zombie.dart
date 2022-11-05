@@ -1,6 +1,6 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
 import 'character_enemy.dart';
 
@@ -22,7 +22,7 @@ class Zombie extends EnemyCharacter {
       image: spriteImages,
       srcSize: size,
     );
-    
+
     downAnimation = spriteSheet.createAnimation(
       row: 0,
       stepTime: 0.2,
@@ -49,6 +49,6 @@ class Zombie extends EnemyCharacter {
     );
     changeDirection();
 
-    addHitbox(HitboxRectangle());
+    add(RectangleHitbox());
   }
 }
