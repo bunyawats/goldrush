@@ -8,17 +8,21 @@ import 'package:audioplayers/audioplayers.dart';
 
 import '/utils/math_utils.dart';
 import 'character.dart';
+import 'coin.dart';
 import 'hud/hud.dart';
 import 'skeleton.dart';
 import 'zombie.dart';
+import 'water.dart';
 
 class George extends Character {
   final HudComponent hud;
   late final double walkingSpeed, runnungSpeed;
   late Vector2 targetLocation;
-  bool movingToTouchLacation = false;
+  bool movingToTouchedLocation = false;
   bool isMoving = false;
   late AudioPlayer audioPlayerRunning;
+  int collisionDirection = Character.down;
+  bool hasWaterCollided = false;
 
   George({
     required this.hud,
@@ -80,7 +84,54 @@ class George extends Character {
       other.removeFromParent();
       hud.scoreText.setScore(20);
 
+      FlameAudio.play('sounds/enemy_dies.wav', volume: 1.0);
+    }
+
+    if (other is Coin) {
+      other.removeFromParent();
+      hud.scoreText.setScore(20);
+
       FlameAudio.play('sounds/coin.wav', volume: 1.0);
+    }
+
+    if (other is Water) {
+      if (movingToTouchedLocation) {
+        movingToTouchedLocation = false;
+      }
+      if (!hasWaterCollided) {
+        collisionDirection = currentDirection;
+      }
+      hasWaterCollided = true;
+    }
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+    hasWaterCollided = false;
+  }
+
+  void movePlayer(double delta) {
+    if (!(hasWaterCollided && (collisionDirection == currentDirection))) {
+      if (movingToTouchedLocation) {
+        position
+            .add((targetLocation - position).normalized() * (speed * delta));
+      } else {
+        switch (currentDirection) {
+          case Character.left:
+            position.add(Vector2(delta * -speed, 0));
+            break;
+          case Character.right:
+            position.add(Vector2(delta * speed, 0));
+            break;
+          case Character.up:
+            position.add(Vector2(0, delta * -speed));
+            break;
+          case Character.down:
+            position.add(Vector2(0, delta * speed));
+            break;
+        }
+      }
     }
   }
 
@@ -90,9 +141,9 @@ class George extends Character {
     speed = hud.runButton.buttonPressed ? runnungSpeed : walkingSpeed;
 
     if (!hud.joystick.delta.isZero()) {
-      position.add(hud.joystick.relativeDelta * speed * dt);
+      movePlayer(dt);
       playing = true;
-      movingToTouchLacation = false;
+      movingToTouchedLocation = false;
 
       if (!isMoving) {
         isMoving = true;
@@ -128,7 +179,7 @@ class George extends Character {
           break;
       }
     } else {
-      if (movingToTouchLacation) {
+      if (movingToTouchedLocation) {
         if (!isMoving) {
           isMoving = true;
           audioPlayerRunning = await FlameAudio.loopLongAudio(
@@ -137,7 +188,7 @@ class George extends Character {
           );
         }
 
-        position += (targetLocation - position).normalized() * (speed * dt);
+        movePlayer(dt);
 
         const threshold = 1.0;
         var difference = targetLocation - position;
@@ -147,25 +198,11 @@ class George extends Character {
           audioPlayerRunning.stop();
           isMoving = false;
 
-          movingToTouchLacation = false;
+          movingToTouchedLocation = false;
           return;
         }
 
         playing = true;
-        var angle = getAngle(position, targetLocation);
-        if ((angle > 315 && angle < 360) || (angle > 0 && angle < 45)) {
-          animation = rightAnimation;
-          currentDirection = Character.right;
-        } else if (angle > 45 && angle < 135) {
-          animation = upAnimation;
-          currentDirection = Character.down;
-        } else if (angle > 135 && angle < 225) {
-          animation = leftAnimation;
-          currentDirection = Character.left;
-        } else if (angle > 225 && angle < 315) {
-          animation = downAnimation;
-          currentDirection = Character.up;
-        }
       } else {
         if (playing) {
           stopAnimation();
@@ -185,7 +222,8 @@ class George extends Character {
 
   void moveToLocation(Vector2 targetLocation) {
     this.targetLocation = targetLocation;
-    movingToTouchLacation = true;
+    movingToTouchedLocation = true;
+    setNewDirection(targetLocation);
   }
 
   void stopAnimations() {
@@ -204,6 +242,23 @@ class George extends Character {
   void onResumed() async {
     if (isMoving) {
       audioPlayerRunning.resume();
+    }
+  }
+
+  void setNewDirection(Vector2 targetLocation) {
+    var angle = getAngle(position, targetLocation);
+    if ((angle > 315 && angle < 360) || (angle > 0 && angle < 45)) {
+      animation = rightAnimation;
+      currentDirection = Character.right;
+    } else if (angle > 45 && angle < 135) {
+      animation = upAnimation;
+      currentDirection = Character.down;
+    } else if (angle > 135 && angle < 225) {
+      animation = leftAnimation;
+      currentDirection = Character.left;
+    } else if (angle > 225 && angle < 315) {
+      animation = downAnimation;
+      currentDirection = Character.up;
     }
   }
 }

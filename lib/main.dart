@@ -34,13 +34,13 @@ class GoldRush extends FlameGame
   Future<void> onLoad() async {
     super.onLoad();
 
-    debugMode = true;
+    //debugMode = true;
 
     FlameAudio.bgm.initialize();
-    await FlameAudio.bgm.play(
-      'music/music.mp3',
-      volume: 0.1,
-    );
+    // await FlameAudio.bgm.play(
+    //   'music/music.mp3',
+    //   volume: 0.1,
+    // );
 
     var hud = HudComponent();
     var george = George(
