@@ -1,14 +1,19 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'dart:ui';
+
+import '../utils/math_utils.dart';
 
 class Water extends PositionComponent with GestureHitboxes, CollisionCallbacks {
   int id;
+  late Vector2 originalPosition;
 
   Water({
     required Vector2 position,
     required Vector2 size,
     required this.id,
-  }) : super(
+  })  : originalPosition = position,
+        super(
           position: position,
           size: size,
         );
@@ -18,5 +23,15 @@ class Water extends PositionComponent with GestureHitboxes, CollisionCallbacks {
     super.onLoad();
 
     add(RectangleHitbox()..collisionType = CollisionType.passive);
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    Rect gameScreenBounds = getGameScreenBounds(size);
+    position = Vector2(
+      originalPosition.x + gameScreenBounds.left,
+      originalPosition.y + gameScreenBounds.top,
+    );
   }
 }

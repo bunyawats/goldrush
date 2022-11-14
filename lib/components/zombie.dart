@@ -13,7 +13,10 @@ class Zombie extends EnemyCharacter {
           position: position,
           size: size,
           speed: speed,
-        );
+        ) {
+    originalPosition = position;
+  }
+
   @override
   Future<void> onLoad() async {
     super.onLoad();

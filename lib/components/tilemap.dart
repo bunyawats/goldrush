@@ -1,25 +1,19 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
-import 'package:flame/input.dart';
+import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/material.dart';
 import '../utils/math_utils.dart';
 
-import 'george.dart';
+class TileMapComponent extends PositionComponent {
+  TiledComponent tiledComponent;
 
-class Backgroud extends PositionComponent with Tappable {
-  final George george;
-
-  Backgroud(this.george) : super(priority: 20);
-
-  @override
-  bool onTapUp(TapUpInfo info) {
-    george.moveToLocation(info.eventPosition.game);
-    return true;
+  TileMapComponent(this.tiledComponent) {
+    add(tiledComponent);
   }
 
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
+
     Rect gameScreenBounds = getGameScreenBounds(size);
     if (size.x > 1600) {
       double xAdjust = (size.x - 1600) / 2;

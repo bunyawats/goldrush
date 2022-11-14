@@ -16,6 +16,8 @@ import 'components/water.dart';
 import 'components/zombie.dart';
 import 'components/hud/hud.dart';
 import 'components/coin.dart';
+import 'components/tilemap.dart';
+import 'utils/math_utils.dart';
 
 void main() async {
   final goldRush = GoldRush();
@@ -36,6 +38,8 @@ class GoldRush extends FlameGame
 
     //debugMode = true;
 
+    Rect gameScreenBounds = getGameScreenBounds(canvasSize);
+
     FlameAudio.bgm.initialize();
     // await FlameAudio.bgm.play(
     //   'music/music.mp3',
@@ -45,17 +49,21 @@ class GoldRush extends FlameGame
     var hud = HudComponent();
     var george = George(
       hud: hud,
-      position: Vector2(200, 400),
+      position: Vector2(
+        gameScreenBounds.left + 300,
+        gameScreenBounds.top + 300,
+      ),
       size: Vector2(48.0, 48.0),
       speed: 40.0,
     );
 
     add(Backgroud(george));
+
     final tiledMap = await TiledComponent.load(
       'tiles.tmx',
       Vector2.all(32),
     );
-    add(tiledMap);
+    add(TileMapComponent(tiledMap));
 
     add(george);
 
@@ -66,7 +74,10 @@ class GoldRush extends FlameGame
       if (index % 2 == 0) {
         add(
           Skeleton(
-            position: Vector2(tiled.x, tiled.y),
+            position: Vector2(
+              tiled.x + gameScreenBounds.left,
+              tiled.y + gameScreenBounds.top,
+            ),
             size: Vector2(32.0, 64.0),
             speed: 60.0,
           ),
@@ -74,7 +85,10 @@ class GoldRush extends FlameGame
       } else {
         add(
           Zombie(
-            position: Vector2(tiled.x, tiled.y),
+            position: Vector2(
+              tiled.x + gameScreenBounds.left,
+              tiled.y + gameScreenBounds.top,
+            ),
             size: Vector2(32.0, 64.0),
             speed: 20.0,
           ),
@@ -86,8 +100,8 @@ class GoldRush extends FlameGame
     for (int i = 0; i < 50; i++) {
       int randomX = random.nextInt(48) + 1;
       int randomY = random.nextInt(48) + 1;
-      double posCoinX = (randomX * 32) + 5;
-      double posCoinY = (randomY * 32) + 5;
+      double posCoinX = (randomX * 32) + 5 + gameScreenBounds.left;
+      double posCoinY = (randomY * 32) + 5 + gameScreenBounds.top;
 
       add(Coin(
         position: Vector2(posCoinX, posCoinY),
@@ -99,7 +113,10 @@ class GoldRush extends FlameGame
     for (final tiled in water!.objects) {
       add(
         Water(
-          position: Vector2(tiled.x, tiled.y),
+          position: Vector2(
+            tiled.x + gameScreenBounds.left,
+            tiled.y + gameScreenBounds.top,
+          ),
           size: Vector2(tiled.width, tiled.height),
           id: tiled.id,
         ),
@@ -111,9 +128,9 @@ class GoldRush extends FlameGame
     camera.speed = 1;
     camera.followComponent(
       george,
-      worldBounds: const Rect.fromLTWH(
-        0,
-        0,
+      worldBounds: Rect.fromLTWH(
+        gameScreenBounds.left,
+        gameScreenBounds.top,
         1600,
         1600,
       ),

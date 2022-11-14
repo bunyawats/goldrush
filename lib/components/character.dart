@@ -1,10 +1,14 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'dart:ui';
 import 'package:flame/sprite.dart';
+import '../utils/math_utils.dart';
 
 class Character extends SpriteAnimationComponent
     with GestureHitboxes, CollisionCallbacks {
   static const int down = 0, left = 1, up = 2, right = 3;
+
+  late Vector2 originalPosition;
 
   late SpriteAnimation downAnimation,
       leftAnimation,
@@ -26,6 +30,17 @@ class Character extends SpriteAnimationComponent
   void onPaused() {}
 
   void onResumed() {}
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+
+    Rect gameScreenBounds = getGameScreenBounds(size);
+    position = Vector2(
+      originalPosition.x + gameScreenBounds.left,
+      originalPosition.y + gameScreenBounds.top,
+    );
+  }
 }
 
 extension CreateAnimationByColumn on SpriteSheet {

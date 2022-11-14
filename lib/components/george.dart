@@ -33,7 +33,9 @@ class George extends Character {
           position: position,
           size: size,
           speed: speed,
-        );
+        ) {
+    originalPosition = position;
+  }
 
   @override
   Future<void> onLoad() async {

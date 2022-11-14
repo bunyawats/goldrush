@@ -7,7 +7,7 @@ class ScoreText extends HudMarginComponent {
   int score = 0;
   late TextComponent scoreTextComponent;
 
-  ScoreText({EdgeInsets? margin}) : super(margin: margin);
+  ScoreText({Vector2? position}) : super(position: position);
 
   @override
   Future<void> onLoad() async {

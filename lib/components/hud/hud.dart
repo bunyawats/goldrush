@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import '../../utils/math_utils.dart';
 import 'run_button.dart';
 import 'score_text.dart';
 import 'joystick.dart';
@@ -9,55 +10,73 @@ class HudComponent extends PositionComponent {
   late Joystick joystick;
   late RunButton runButton;
   late ScoreText scoreText;
+  bool isInitialised = false;
 
   HudComponent() : super(priority: 20);
 
   @override
-  Future<void> onLoad() async {
-    super.onLoad();
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
 
-    joystick = Joystick(
-      knob: CircleComponent(
-        radius: 20.0,
-        paint: BasicPalette.blue.withAlpha(200).paint(),
-      ),
-      background: CircleComponent(
-        radius: 40.0,
-        paint: BasicPalette.blue.withAlpha(100).paint(),
-      ),
-      magin: const EdgeInsets.only(
-        left: 40,
-        bottom: 40,
-      ),
-    );
+    Rect gameScreenBounds = getGameScreenBounds(size);
+    if (!isInitialised) {
+      joystick = Joystick(
+        knob: CircleComponent(
+          radius: 20.0,
+          paint: BasicPalette.blue.withAlpha(200).paint(),
+        ),
+        background: CircleComponent(
+          radius: 40.0,
+          paint: BasicPalette.blue.withAlpha(100).paint(),
+        ),
+        position: Vector2(
+          gameScreenBounds.left + 100,
+          gameScreenBounds.bottom - 80,
+        ),
+      );
 
-    runButton = RunButton(
-      button: CircleComponent(
-        radius: 25.0,
-        paint: BasicPalette.red.withAlpha(200).paint(),
-      ),
-      buttonDown: CircleComponent(
-        radius: 25.0,
-        paint: BasicPalette.red.withAlpha(100).paint(),
-      ),
-      margin: const EdgeInsets.only(
-        right: 20,
-        bottom: 50,
-      ),
-      onPressed: () => {},
-    );
+      runButton = RunButton(
+        button: CircleComponent(
+          radius: 25.0,
+          paint: BasicPalette.red.withAlpha(200).paint(),
+        ),
+        buttonDown: CircleComponent(
+          radius: 25.0,
+          paint: BasicPalette.red.withAlpha(100).paint(),
+        ),
+        position: Vector2(
+          gameScreenBounds.right - 80,
+          gameScreenBounds.bottom - 80,
+        ),
+        onPressed: () => {},
+      );
 
-    scoreText = ScoreText(
-      margin: const EdgeInsets.only(
-        left: 40,
-        top: 60,
-      ),
-    );
+      scoreText = ScoreText(
+        position: Vector2(
+          gameScreenBounds.left + 80,
+          gameScreenBounds.top + 60,
+        ),
+      );
 
-    add(joystick);
-    add(runButton);
-    add(scoreText);
+      add(joystick);
+      add(runButton);
+      add(scoreText);
 
-    positionType = PositionType.viewport;
+      positionType = PositionType.viewport;
+      isInitialised = true;
+    } else {
+      joystick.position = Vector2(
+        gameScreenBounds.left + 80,
+        gameScreenBounds.bottom - 80,
+      );
+      runButton.position = Vector2(
+        gameScreenBounds.right - 80,
+        gameScreenBounds.bottom - 80,
+      );
+      scoreText.position = Vector2(
+        gameScreenBounds.left + 80,
+        gameScreenBounds.top + 60,
+      );
+    }
   }
 }
