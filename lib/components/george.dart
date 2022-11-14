@@ -5,9 +5,12 @@ import 'package:flame/sprite.dart';
 import 'package:flame_audio/flame_audio.dart';
 // ignore: depend_on_referenced_packages
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:goldrush/main.dart';
 
 import '/utils/math_utils.dart';
+import '/utils/effects.dart';
 import 'character.dart';
 import 'coin.dart';
 import 'hud/hud.dart';
@@ -15,7 +18,7 @@ import 'skeleton.dart';
 import 'zombie.dart';
 import 'water.dart';
 
-class George extends Character with KeyboardHandler {
+class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
   final HudComponent hud;
   late final double walkingSpeed, runnungSpeed;
   late Vector2 targetLocation;
@@ -92,6 +95,11 @@ class George extends Character with KeyboardHandler {
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     if (other is Zombie || other is Skeleton) {
+      gameRef.add(
+        ParticleSystemComponent(
+            particle: explodingParticle(other.position, Colors.red)),
+      );
+
       other.removeFromParent();
       hud.scoreText.setScore(10);
 
@@ -99,6 +107,11 @@ class George extends Character with KeyboardHandler {
     }
 
     if (other is Coin) {
+      gameRef.add(
+        ParticleSystemComponent(
+            particle: explodingParticle(other.position, Colors.yellow)),
+      );
+
       other.removeFromParent();
       hud.scoreText.setScore(20);
 
