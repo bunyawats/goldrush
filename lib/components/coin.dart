@@ -4,9 +4,11 @@ import 'dart:ui';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import '../utils/math_utils.dart';
+import '../utils/effects.dart';
 
 class Coin extends SpriteAnimationComponent with GestureHitboxes {
   late Vector2 originalPosition;
+  late ShadowLayer shadowLayer;
 
   Coin({
     required Vector2 position,
@@ -20,6 +22,8 @@ class Coin extends SpriteAnimationComponent with GestureHitboxes {
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
+    shadowLayer = ShadowLayer(super.render);
 
     var spriteImages = await Flame.images.load('coins.png');
     final spriteSheet = SpriteSheet(image: spriteImages, srcSize: size);
@@ -41,5 +45,11 @@ class Coin extends SpriteAnimationComponent with GestureHitboxes {
       originalPosition.x + gameScreenBounds.left,
       originalPosition.y + gameScreenBounds.top,
     );
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    shadowLayer.render(canvas);
   }
 }

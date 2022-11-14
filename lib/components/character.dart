@@ -3,12 +3,14 @@ import 'package:flame/components.dart';
 import 'dart:ui';
 import 'package:flame/sprite.dart';
 import '../utils/math_utils.dart';
+import '../utils/effects.dart';
 
 class Character extends SpriteAnimationComponent
     with GestureHitboxes, CollisionCallbacks {
   static const int down = 0, left = 1, up = 2, right = 3;
 
   late Vector2 originalPosition;
+  late ShadowLayer shadowLayer;
 
   late SpriteAnimation downAnimation,
       leftAnimation,
@@ -40,6 +42,18 @@ class Character extends SpriteAnimationComponent
       originalPosition.x + gameScreenBounds.left,
       originalPosition.y + gameScreenBounds.top,
     );
+  }
+
+  @override
+  Future<void> onLoad() async {
+    shadowLayer = ShadowLayer(super.render);
+    return super.onLoad();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    shadowLayer.render(canvas);
   }
 }
 
