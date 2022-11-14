@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/flame.dart';
@@ -31,7 +32,11 @@ void main() async {
 }
 
 class GoldRush extends FlameGame
-    with HasDraggables, HasTappables, HasCollisionDetection {
+    with
+        HasDraggables,
+        HasTappables,
+        HasCollisionDetection,
+        HasKeyboardHandlerComponents {
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -41,10 +46,10 @@ class GoldRush extends FlameGame
     Rect gameScreenBounds = getGameScreenBounds(canvasSize);
 
     FlameAudio.bgm.initialize();
-    // await FlameAudio.bgm.play(
-    //   'music/music.mp3',
-    //   volume: 0.1,
-    // );
+    await FlameAudio.bgm.play(
+      'music/music.mp3',
+      volume: 0.1,
+    );
 
     var hud = HudComponent();
     var george = George(
