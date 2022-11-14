@@ -45,8 +45,11 @@ class George extends Character {
     runnungSpeed = speed * 2;
 
     var spriteImages = await Flame.images.load('george.png');
-    final spriteSheet =
-        SpriteSheet(image: spriteImages, srcSize: Vector2(width, height));
+    final spriteSheet = SpriteSheet(
+      image: spriteImages,
+      srcSize: Vector2(width, height),
+    );
+
     downAnimation = spriteSheet.createAnimationByColumn(
       column: 0,
       stepTime: 0.2,
@@ -84,7 +87,7 @@ class George extends Character {
     super.onCollision(intersectionPoints, other);
     if (other is Zombie || other is Skeleton) {
       other.removeFromParent();
-      hud.scoreText.setScore(20);
+      hud.scoreText.setScore(10);
 
       FlameAudio.play('sounds/enemy_dies.wav', volume: 1.0);
     }
@@ -97,13 +100,14 @@ class George extends Character {
     }
 
     if (other is Water) {
-      if (movingToTouchedLocation) {
-        movingToTouchedLocation = false;
-      }
       if (!hasWaterCollided) {
-        collisionDirection = currentDirection;
+        if (movingToTouchedLocation) {
+          movingToTouchedLocation = false;
+        } else {
+          hasWaterCollided = true;
+          collisionDirection = currentDirection;
+        }
       }
-      hasWaterCollided = true;
     }
   }
 

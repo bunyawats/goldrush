@@ -56,7 +56,8 @@ class GoldRush extends FlameGame
       size: Vector2(48.0, 48.0),
       speed: 40.0,
     );
-
+    add(george);
+    children.changePriority(george, 15);
     add(Backgroud(george));
 
     final tiledMap = await TiledComponent.load(
@@ -64,11 +65,9 @@ class GoldRush extends FlameGame
       Vector2.all(32),
     );
     add(TileMapComponent(tiledMap));
-
-    add(george);
+    add(hud);
 
     final enemies = tiledMap.tileMap.getLayer<ObjectGroup>('Enemies');
-
     for (int index = 0; index < enemies!.objects.length; index++) {
       TiledObject tiled = enemies.objects[index];
       if (index % 2 == 0) {
@@ -122,8 +121,6 @@ class GoldRush extends FlameGame
         ),
       );
     }
-
-    add(hud);
 
     camera.speed = 1;
     camera.followComponent(
