@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
-import '../utils/math_utils.dart';
 
+import '../utils/math_utils.dart';
 import 'george.dart';
 
 class Backgroud extends PositionComponent with Tappable {

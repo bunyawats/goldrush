@@ -1,26 +1,26 @@
+// ignore: depend_on_referenced_packages
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_audio/flame_audio.dart';
-// ignore: depend_on_referenced_packages
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:goldrush/main.dart';
 
-import '/utils/math_utils.dart';
 import '/utils/effects.dart';
+import '/utils/math_utils.dart';
+import '../../main.dart';
 import 'character.dart';
 import 'coin.dart';
 import 'hud/hud.dart';
 import 'skeleton.dart';
-import 'zombie.dart';
 import 'water.dart';
+import 'zombie.dart';
 
 class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
   final HudComponent hud;
-  late final double walkingSpeed, runnungSpeed;
+  late final double walkingSpeed, runningSpeed;
   late Vector2 targetLocation;
   bool movingToTouchedLocation = false;
   bool isMoving = false;
@@ -32,6 +32,7 @@ class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
       keyUpPressed = false,
       keyDownPressed = false,
       keyRunningPressed = false;
+  int health = 100;
 
   George({
     required this.hud,
@@ -51,7 +52,7 @@ class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
     super.onLoad();
 
     walkingSpeed = speed;
-    runnungSpeed = speed * 2;
+    runningSpeed = speed * 2;
 
     var spriteImages = await Flame.images.load('george.png');
     final spriteSheet = SpriteSheet(
@@ -99,9 +100,13 @@ class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
         ParticleSystemComponent(
             particle: explodingParticle(other.position, Colors.red)),
       );
-
       other.removeFromParent();
-      hud.scoreText.setScore(10);
+      if (health > 0) {
+        health -= 25;
+        hud.healthText.setHealth(health);
+      } else {
+        // TODO: Show game over screen here
+      }
 
       FlameAudio.play('sounds/enemy_dies.wav', volume: 1.0);
     }
@@ -164,7 +169,7 @@ class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
   void update(double dt) async {
     super.update(dt);
     speed = (hud.runButton.buttonPressed || keyRunningPressed)
-        ? runnungSpeed
+        ? runningSpeed
         : walkingSpeed;
 
     final bool isMovingByKeys =

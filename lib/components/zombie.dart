@@ -2,14 +2,18 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
+
+import 'character.dart';
 import 'character_enemy.dart';
 
 class Zombie extends EnemyCharacter {
   Zombie({
+    required Character player,
     required Vector2 position,
     required Vector2 size,
     required double speed,
   }) : super(
+          player: player,
           position: position,
           size: size,
           speed: speed,

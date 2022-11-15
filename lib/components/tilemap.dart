@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
+
 import '../utils/math_utils.dart';
 
 class TileMapComponent extends PositionComponent {

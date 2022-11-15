@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:flame/game.dart';
 import 'package:flame/layers.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 Particle explodingParticle(Vector2 origin, MaterialColor color) {
   double distanceToMove = 15.0;

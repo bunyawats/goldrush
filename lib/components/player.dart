@@ -1,8 +1,9 @@
 import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
 import 'package:flame/palette.dart';
+import 'package:flutter/material.dart';
 
 class Player extends PositionComponent
     with GestureHitboxes, CollisionCallbacks {

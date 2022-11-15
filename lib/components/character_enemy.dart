@@ -1,19 +1,56 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+
+import '../utils/math_utils.dart';
 import 'character.dart';
 import 'water.dart';
 
+enum EnemyMovementType {
+  WALKING,
+  CHASING,
+}
+
 class EnemyCharacter extends Character {
   EnemyCharacter({
+    required Character player,
     required Vector2 position,
     required Vector2 size,
     required double speed,
-  }) : super(
+  })  : playerToTrack = player,
+        walkingSpeed = speed,
+        chasingSpeed = speed * 2,
+        super(
           position: position,
           size: size,
           speed: speed,
         );
+
+  Character playerToTrack;
+  EnemyMovementType enemyMovementType = EnemyMovementType.WALKING;
+  static const DISTANCE_TO_TRACK = 150.0;
+  double walkingSpeed, chasingSpeed;
+
+  bool isPlayerNearAndVisible() {
+    bool isPlayerNear =
+        position.distanceTo(playerToTrack.position) < DISTANCE_TO_TRACK;
+    bool isEnemyFacingPlayer = false;
+    var angle = getAngle(position, playerToTrack.position);
+    if ((angle > 315 && angle < 360) || (angle > 0 && angle < 45)) {
+      // Facing right
+      isEnemyFacingPlayer = currentDirection == Character.right;
+    } else if (angle > 45 && angle < 135) {
+      // Facing down
+      isEnemyFacingPlayer = currentDirection == Character.down;
+    } else if (angle > 135 && angle < 225) {
+      // Facing left
+      isEnemyFacingPlayer = currentDirection == Character.left;
+    } else if (angle > 225 && angle < 315) {
+      // Facing up
+      isEnemyFacingPlayer = currentDirection == Character.up;
+    }
+    return isPlayerNear && isEnemyFacingPlayer;
+  }
 
   void changeDirection() {
     Random random = Random();
@@ -38,28 +75,43 @@ class EnemyCharacter extends Character {
   @override
   void update(double dt) {
     super.update(dt);
+
     elapsedTime += dt;
-    if (elapsedTime > 3.0) {
-      changeDirection();
-      elapsedTime = 0.0;
-    }
-    switch (currentDirection) {
-      case Character.down:
-        position.y += speed * dt;
+
+    speed = isPlayerNearAndVisible() ? chasingSpeed : walkingSpeed;
+    enemyMovementType = isPlayerNearAndVisible()
+        ? EnemyMovementType.CHASING
+        : EnemyMovementType.WALKING;
+
+    switch (enemyMovementType) {
+      case EnemyMovementType.WALKING:
+        if (elapsedTime > 3.0) {
+          changeDirection();
+          elapsedTime = 0.0;
+        }
+
+        switch (currentDirection) {
+          case Character.down:
+            position.y += speed * dt;
+            break;
+          case Character.left:
+            position.x -= speed * dt;
+            break;
+          case Character.up:
+            position.y -= speed * dt;
+            break;
+          case Character.right:
+            position.x += speed * dt;
+            break;
+        }
         break;
-      case Character.left:
-        position.x -= speed * dt;
-        break;
-      case Character.up:
-        position.y -= speed * dt;
-        break;
-      case Character.right:
-        position.x += speed * dt;
+      case EnemyMovementType.CHASING:
+        Vector2 direction = (playerToTrack.position - position).normalized();
+        position += direction * dt * speed;
         break;
     }
   }
 
-  @override
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);

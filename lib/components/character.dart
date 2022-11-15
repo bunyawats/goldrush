@@ -1,9 +1,11 @@
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'dart:ui';
 import 'package:flame/sprite.dart';
-import '../utils/math_utils.dart';
+
 import '../utils/effects.dart';
+import '../utils/math_utils.dart';
 
 class Character extends SpriteAnimationComponent
     with GestureHitboxes, CollisionCallbacks {

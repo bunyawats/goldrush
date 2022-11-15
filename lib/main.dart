@@ -1,23 +1,23 @@
 import 'dart:math';
 
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
-import 'package:flame/flame.dart';
-import 'package:flame_audio/flame_audio.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tiled/tiled.dart';
 
 import 'components/background.dart';
 import 'components/character.dart';
+import 'components/coin.dart';
 import 'components/george.dart';
+import 'components/hud/hud.dart';
 import 'components/skeleton.dart';
+import 'components/tilemap.dart';
 import 'components/water.dart';
 import 'components/zombie.dart';
-import 'components/hud/hud.dart';
-import 'components/coin.dart';
-import 'components/tilemap.dart';
 import 'utils/math_utils.dart';
 
 void main() async {
@@ -58,7 +58,7 @@ class GoldRush extends FlameGame
         gameScreenBounds.left + 300,
         gameScreenBounds.top + 300,
       ),
-      size: Vector2(48.0, 48.0),
+      size: Vector2(32.0, 32.0),
       speed: 40.0,
     );
     add(george);
@@ -78,6 +78,7 @@ class GoldRush extends FlameGame
       if (index % 2 == 0) {
         add(
           Skeleton(
+            player: george,
             position: Vector2(
               tiled.x + gameScreenBounds.left,
               tiled.y + gameScreenBounds.top,
@@ -89,6 +90,7 @@ class GoldRush extends FlameGame
       } else {
         add(
           Zombie(
+            player: george,
             position: Vector2(
               tiled.x + gameScreenBounds.left,
               tiled.y + gameScreenBounds.top,

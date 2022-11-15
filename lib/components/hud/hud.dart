@@ -1,15 +1,18 @@
 import 'package:flame/components.dart';
-import '../../utils/math_utils.dart';
-import 'run_button.dart';
-import 'score_text.dart';
-import 'joystick.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/math_utils.dart';
+import 'health_text.dart';
+import 'joystick.dart';
+import 'run_button.dart';
+import 'score_text.dart';
 
 class HudComponent extends PositionComponent {
   late Joystick joystick;
   late RunButton runButton;
   late ScoreText scoreText;
+  late HealthText healthText;
   bool isInitialised = false;
 
   HudComponent() : super(priority: 20);
@@ -53,7 +56,14 @@ class HudComponent extends PositionComponent {
 
       scoreText = ScoreText(
         position: Vector2(
-          gameScreenBounds.left + 80,
+          gameScreenBounds.left + 60,
+          gameScreenBounds.top + 60,
+        ),
+      );
+
+      healthText = HealthText(
+        position: Vector2(
+          gameScreenBounds.right - 200,
           gameScreenBounds.top + 60,
         ),
       );
@@ -61,6 +71,7 @@ class HudComponent extends PositionComponent {
       add(joystick);
       add(runButton);
       add(scoreText);
+      add(healthText);
 
       positionType = PositionType.viewport;
       isInitialised = true;
@@ -75,6 +86,10 @@ class HudComponent extends PositionComponent {
       );
       scoreText.position = Vector2(
         gameScreenBounds.left + 80,
+        gameScreenBounds.top + 60,
+      );
+      healthText.position = Vector2(
+        gameScreenBounds.right - 200,
         gameScreenBounds.top + 60,
       );
     }

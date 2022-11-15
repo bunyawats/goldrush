@@ -1,10 +1,12 @@
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'dart:ui';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
-import '../utils/math_utils.dart';
+
 import '../utils/effects.dart';
+import '../utils/math_utils.dart';
 
 class Coin extends SpriteAnimationComponent with GestureHitboxes {
   late Vector2 originalPosition;
