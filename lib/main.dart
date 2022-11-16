@@ -18,6 +18,7 @@ import 'components/skeleton.dart';
 import 'components/tilemap.dart';
 import 'components/water.dart';
 import 'components/zombie.dart';
+import 'utils/map_utils.dart';
 import 'utils/math_utils.dart';
 
 void main() async {
@@ -41,7 +42,7 @@ class GoldRush extends FlameGame
   Future<void> onLoad() async {
     super.onLoad();
 
-    //debugMode = true;
+    debugMode = true;
 
     Rect gameScreenBounds = getGameScreenBounds(canvasSize);
 
@@ -51,8 +52,35 @@ class GoldRush extends FlameGame
       volume: 0.1,
     );
 
+    final tiledMap = await TiledComponent.load(
+      'tiles.tmx',
+      Vector2.all(32),
+    );
+    add(TileMapComponent(tiledMap));
+
+    List<Offset> barrierOffsets = [];
+    final water = tiledMap.tileMap.getLayer<ObjectGroup>('Water');
+    for (final tiled in water!.objects) {
+      if (tiled.width == 32 && tiled.height == 32) {
+        barrierOffsets.add(
+          worldToGridOffset(Vector2(tiled.x, tiled.y)),
+        );
+      }
+      add(
+        Water(
+          position: Vector2(
+            tiled.x + gameScreenBounds.left,
+            tiled.y + gameScreenBounds.top,
+          ),
+          size: Vector2(tiled.width, tiled.height),
+          id: tiled.id,
+        ),
+      );
+    }
+
     var hud = HudComponent();
     var george = George(
+      barrierOffsets: barrierOffsets,
       hud: hud,
       position: Vector2(
         gameScreenBounds.left + 300,
@@ -63,13 +91,8 @@ class GoldRush extends FlameGame
     );
     add(george);
     children.changePriority(george, 15);
-    add(Backgroud(george));
 
-    final tiledMap = await TiledComponent.load(
-      'tiles.tmx',
-      Vector2.all(32),
-    );
-    add(TileMapComponent(tiledMap));
+    add(Backgroud(george));
     add(hud);
 
     final enemies = tiledMap.tileMap.getLayer<ObjectGroup>('Enemies');
@@ -113,20 +136,6 @@ class GoldRush extends FlameGame
         position: Vector2(posCoinX, posCoinY),
         size: Vector2(20, 20),
       ));
-    }
-
-    final water = tiledMap.tileMap.getLayer<ObjectGroup>('Water');
-    for (final tiled in water!.objects) {
-      add(
-        Water(
-          position: Vector2(
-            tiled.x + gameScreenBounds.left,
-            tiled.y + gameScreenBounds.top,
-          ),
-          size: Vector2(tiled.width, tiled.height),
-          id: tiled.id,
-        ),
-      );
     }
 
     camera.speed = 1;

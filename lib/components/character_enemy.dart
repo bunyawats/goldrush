@@ -7,8 +7,8 @@ import 'character.dart';
 import 'water.dart';
 
 enum EnemyMovementType {
-  WALKING,
-  CHASING,
+  walking,
+  chasing,
 }
 
 class EnemyCharacter extends Character {
@@ -27,13 +27,13 @@ class EnemyCharacter extends Character {
         );
 
   Character playerToTrack;
-  EnemyMovementType enemyMovementType = EnemyMovementType.WALKING;
-  static const DISTANCE_TO_TRACK = 150.0;
+  EnemyMovementType enemyMovementType = EnemyMovementType.walking;
+  static const distanceToTrack = 150.0;
   double walkingSpeed, chasingSpeed;
 
   bool isPlayerNearAndVisible() {
     bool isPlayerNear =
-        position.distanceTo(playerToTrack.position) < DISTANCE_TO_TRACK;
+        position.distanceTo(playerToTrack.position) < distanceToTrack;
     bool isEnemyFacingPlayer = false;
     var angle = getAngle(position, playerToTrack.position);
     if ((angle > 315 && angle < 360) || (angle > 0 && angle < 45)) {
@@ -80,11 +80,11 @@ class EnemyCharacter extends Character {
 
     speed = isPlayerNearAndVisible() ? chasingSpeed : walkingSpeed;
     enemyMovementType = isPlayerNearAndVisible()
-        ? EnemyMovementType.CHASING
-        : EnemyMovementType.WALKING;
+        ? EnemyMovementType.chasing
+        : EnemyMovementType.walking;
 
     switch (enemyMovementType) {
-      case EnemyMovementType.WALKING:
+      case EnemyMovementType.walking:
         if (elapsedTime > 3.0) {
           changeDirection();
           elapsedTime = 0.0;
@@ -105,7 +105,7 @@ class EnemyCharacter extends Character {
             break;
         }
         break;
-      case EnemyMovementType.CHASING:
+      case EnemyMovementType.chasing:
         Vector2 direction = (playerToTrack.position - position).normalized();
         position += direction * dt * speed;
         break;
