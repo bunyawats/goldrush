@@ -49,7 +49,7 @@ class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
           position: position,
           size: size,
           speed: speed,
-  ) {
+        ) {
     originalPosition = position;
   }
 
@@ -87,7 +87,8 @@ class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
     playing = false;
     anchor = Anchor.center;
 
-    add(RectangleHitbox());
+    add(RectangleHitbox.relative(Vector2(0.7, 0.7),
+        parentSize: Vector2(32, 32)));
 
     await FlameAudio.audioCache.loadAll(
       [

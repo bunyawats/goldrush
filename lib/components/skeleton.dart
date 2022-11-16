@@ -13,7 +13,7 @@ class Skeleton extends EnemyCharacter {
     required Vector2 size,
     required double speed,
   }) : super(
-    player: player,
+          player: player,
           position: position,
           size: size,
           speed: speed,
@@ -56,6 +56,7 @@ class Skeleton extends EnemyCharacter {
     );
     changeDirection();
 
-    add(RectangleHitbox());
+    add(RectangleHitbox.relative(Vector2(1.0, 0.7),
+        parentSize: Vector2(32.0, 64.0)));
   }
 }

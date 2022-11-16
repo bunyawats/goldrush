@@ -56,6 +56,7 @@ class Zombie extends EnemyCharacter {
     );
     changeDirection();
 
-    add(RectangleHitbox());
+    add(RectangleHitbox.relative(Vector2(1.0, 0.7),
+        parentSize: Vector2(32.0, 64.0)));
   }
 }
