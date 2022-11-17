@@ -161,6 +161,13 @@ class George extends Character with KeyboardHandler, HasGameRef<GoldRush> {
         health -= 25;
         hud.healthText.setHealth(health);
       }
+      if (health == 0) {
+        Navigator.pushNamedAndRemoveUntil(
+          gameRef.buildContext!,
+          '/gameover',
+          (route) => false,
+        );
+      }
 
       FlameAudio.play('sounds/enemy_dies.wav', volume: 1.0);
     }
