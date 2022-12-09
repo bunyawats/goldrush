@@ -14,7 +14,7 @@ class MenuScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             getGameTitle(),
-            getrGameMenu(context),
+            getGameMenu(context),
           ],
         ),
       ),
@@ -31,7 +31,7 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  Widget getrGameMenu(BuildContext context) {
+  Widget getGameMenu(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(40.0),
       child: Column(

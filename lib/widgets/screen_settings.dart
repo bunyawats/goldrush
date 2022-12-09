@@ -16,9 +16,14 @@ class SettingsScreenState extends State<SettingsScreen> {
     super.initState();
 
     SharedPreferences.getInstance()
-        .then((prefs) => prefs.getDouble('musicVolume') ?? 25.0)
-        .then((savedMusicVolume) =>
-            setState(() => musicVolume = savedMusicVolume));
+        .then(
+          (prefs) => prefs.getDouble('musicVolume') ?? 25.0,
+        )
+        .then(
+          (savedMusicVolume) => setState(
+            () => musicVolume = savedMusicVolume,
+          ),
+        );
   }
 
   @override
@@ -65,18 +70,23 @@ class SettingsScreenState extends State<SettingsScreen> {
     return SizedBox(
       width: 250.0,
       child: Slider(
-          value: musicVolume,
-          min: 0.0,
-          max: 100.0,
-          label: '${musicVolume.round()}',
-          divisions: 4,
-          onChanged: (double newMusicVolume) {
-            SharedPreferences.getInstance().then((prefs) => prefs.setDouble(
-                  'musicVolume',
-                  newMusicVolume,
-                ));
-            setState(() => musicVolume = newMusicVolume);
-          }),
+        value: musicVolume,
+        min: 0.0,
+        max: 100.0,
+        label: '${musicVolume.round()}',
+        divisions: 4,
+        onChanged: (double newMusicVolume) {
+          SharedPreferences.getInstance().then(
+            (prefs) => prefs.setDouble(
+              'musicVolume',
+              newMusicVolume,
+            ),
+          );
+          setState(
+            () => musicVolume = newMusicVolume,
+          );
+        },
+      ),
     );
   }
 
